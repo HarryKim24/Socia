@@ -1,20 +1,23 @@
 import { useState } from 'react';
-import { TextField, Button, Typography, Box, Link, ThemeProvider, FormControlLabel, Checkbox } from '@mui/material';
-import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Typography, Box, ThemeProvider, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Checkbox, Link } from '@mui/material';
+import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import theme from '../styles/theme';
-import { users } from '../database/db';
+import { addUser, users } from '../database/db';
 
-const LoginPage = () => {
+const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // 비밀번호 보이기 상태 추가
+  const [success, setSuccess] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (email === '' || password === '') {
-      setError('이메일 또는 비밀번호를 입력해주세요.');
+  const handleSignup = () => {
+    if (email === '' || password === '' || name === '') {
+      setError('모든 필드를 입력해주세요.');
       return;
     }
 
@@ -24,14 +27,31 @@ const LoginPage = () => {
       return;
     }
 
-    const user = users.find((u) => u.email === email && u.password === password);
-
-    if (!user) {
-      setError('아이디 또는 비밀번호를 잘못 입력했습니다.');
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,64}$/;
+    if (!passwordRegex.test(password)) {
+      setError('비밀번호는 8~64자 사이의 영문과 숫자가 포함되어야 합니다.');
       return;
     }
+
+    const existingUser = users.find((user) => user.email === email);
+    if (existingUser) {
+      setError('이미 등록된 이메일 주소입니다.');
+      return;
+    }
+
+    addUser({ email, password, name });
     setError(null);
-    navigate('/home');
+    setSuccess('회원가입이 완료되었습니다!');
+    setOpenModal(true);
+
+    setEmail('');
+    setPassword('');
+    setName('');
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    navigate('/login');
   };
 
   const handleToggleShowPassword = () => {
@@ -44,7 +64,7 @@ const LoginPage = () => {
         <FullPageWrapper>
           <FormWrapper>
             <Typography variant="h4" gutterBottom>
-              로그인
+              회원가입
             </Typography>
 
             {error && (
@@ -52,6 +72,21 @@ const LoginPage = () => {
                 {error}
               </Typography>
             )}
+
+            {success && (
+              <Typography color="primary" variant="body2" align="center" marginBottom={2}>
+                {success}
+              </Typography>
+            )}
+
+            <TextField
+              label="이름"
+              variant="outlined"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
 
             <TextField
               label="이메일"
@@ -65,7 +100,7 @@ const LoginPage = () => {
 
             <TextField
               label="비밀번호"
-              type={showPassword ? 'text' : 'password'} // 비밀번호 보이기 상태에 따라 타입 변경
+              type={showPassword ? 'text' : 'password'}
               variant="outlined"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -77,7 +112,7 @@ const LoginPage = () => {
               control={
                 <Checkbox
                   checked={showPassword}
-                  onChange={handleToggleShowPassword} // 체크박스 클릭 시 비밀번호 보이기 상태 토글
+                  onChange={handleToggleShowPassword}
                   color="primary"
                 />
               }
@@ -87,23 +122,37 @@ const LoginPage = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={handleLogin}
+              onClick={handleSignup}
               fullWidth
               sx={{ marginTop: 2 }}
             >
-              로그인
+              회원가입
             </Button>
 
             <Box marginTop={2}>
               <Typography variant="body2" align="center">
-                아직 회원이 아니신가요?{' '}
-                <Link href="/signup" variant="body2">
-                  회원가입
+                이미 계정이 있으신가요?{' '}
+                <Link href="/login" variant="body2">
+                  로그인
                 </Link>
               </Typography>
             </Box>
           </FormWrapper>
         </FullPageWrapper>
+
+        <Dialog open={openModal} onClose={handleCloseModal}>
+          <DialogTitle>회원가입 성공</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" align="center">
+              회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="primary">
+              확인
+            </Button>
+          </DialogActions>
+        </Dialog>
       </ThemeProvider>
     </StyledThemeProvider>
   );
@@ -130,4 +179,4 @@ const FormWrapper = styled(Box)`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
-export default LoginPage;
+export default SignupPage;

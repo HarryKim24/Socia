@@ -6,13 +6,13 @@ const theme = createTheme({
       main: '#673ab7',
     },
     secondary: {
-      main: '#9c27b0',
+      main: '#9e77d4',
     },
     error: {
       main: '#f44336',
     },
     background: {
-      default: '#f0f0f0', 
+      default: '#d1c4e9',
     },
   },
   typography: {

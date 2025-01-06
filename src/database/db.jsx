@@ -5,3 +5,7 @@ export const users = [
     name: "name1",
   },
 ];
+
+export const addUser = (user) => {
+  users.push(user);
+};
