@@ -1,17 +1,7 @@
 export const users = [
   {
-    email: "user1@example.com",
-    password: "password123",
-    name: "User One",
-  },
-  {
-    email: "user2@example.com",
-    password: "password456",
-    name: "User Two",
-  },
-  {
-    email: "user3@example.com",
-    password: "password789",
-    name: "User Three",
+    email: "test1@mail.com",
+    password: "test1234",
+    name: "name1",
   },
 ];

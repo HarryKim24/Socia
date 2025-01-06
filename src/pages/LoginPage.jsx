@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import { TextField, Button, Typography, Box, Link, ThemeProvider } from '@mui/material';
-import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';  // styled-components ThemeProvider 임포트
+import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import theme from '../styles/theme';
+import { users } from '../database/db';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     if (email === '' || password === '') {
-      setError('이메일과 비밀번호를 입력해주세요.');
+      setError('이메일 또는 비밀번호를 입력해주세요.');
       return;
     }
-
-    // 아이디 또는 비밀번호 잘못 입력시 '아이디 또는 비밀번호를 잘못 입력했습니다' 메세지 
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
@@ -22,11 +23,14 @@ const LoginPage = () => {
       return;
     }
 
-    // 로그인 로직
-    console.log('로그인 성공:', email, password);
-    setError(null);
+    const user = users.find((u) => u.email === email && u.password === password);
 
-    // 로그인 후 리디렉션 등 추가 작업
+    if (!user) {
+      setError('아이디 또는 비밀번호를 잘못 입력했습니다.');
+      return;
+    }
+    setError(null);
+    navigate('/home');
   };
 
   return (
