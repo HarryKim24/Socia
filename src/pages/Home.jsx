@@ -1,0 +1,10 @@
+const Home = () => {
+  return (
+    <div>
+      <h1>홈페이지</h1>
+      <p>홈페이지 내용</p>
+    </div>
+  );
+};
+
+export default Home;
