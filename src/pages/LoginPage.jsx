@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { TextField, Button, Typography, Box, Link, ThemeProvider, FormControlLabel, Checkbox } from '@mui/material';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
@@ -6,7 +7,7 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import theme from '../styles/theme';
 import { users } from '../database/db';
 
-const LoginPage = () => {
+const LoginPage = ({ setCurrentUser }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -31,7 +32,9 @@ const LoginPage = () => {
       setError('아이디 또는 비밀번호를 잘못 입력했습니다.');
       return;
     }
+
     setError(null);
+    setCurrentUser(user);
     navigate('/home');
   };
 

@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import { AppBar, Toolbar, Typography, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const TopBar = () => {
+const TopBar = ({ currentUser }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -20,6 +21,10 @@ const TopBar = () => {
     navigate('/login');
   };
 
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
   return (
     <>
       <AppBar position="sticky" sx={{ minHeight: '64px', width: '100%' }}>
@@ -29,9 +34,15 @@ const TopBar = () => {
             <Typography variant="h6">SOCIA</Typography>
           </Box>
           <Box sx={{ marginLeft: 'auto' }}>
-            <Button color="inherit" onClick={handleLogoutClick}>
-              Logout
-            </Button>
+            {currentUser ? (
+              <Button color="inherit" onClick={handleLogoutClick}>
+                Logout
+              </Button>
+            ) : (
+              <Button color="inherit" onClick={handleLoginClick}>
+                Login
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
