@@ -1,13 +1,15 @@
-import './App.css'
-import AppRouter from './routes/AppRouter'
+// App.jsx
+import './App.css';
+import AppRouter from './routes/AppRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './styles/theme';
 
 function App() {
-
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       <AppRouter />
-    </div>
-  )
+    </ThemeProvider>
+  );
 }
 
 export default App;

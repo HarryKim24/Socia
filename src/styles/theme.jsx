@@ -13,10 +13,12 @@ const theme = createTheme({
     },
     background: {
       default: '#d1c4e9',
+      paper: '#ede7f6',
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Exo 2", "Helvetica", "Arial", sans-serif',
+    fontWeightBold: 700,
   },
 });
 
