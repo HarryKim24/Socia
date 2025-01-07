@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Typography, Box, ThemeProvider, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Checkbox, Link } from '@mui/material';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
+import InstagramIcon from '@mui/icons-material/Instagram'; // Instagram 아이콘 import
 import theme from '../styles/theme';
 import { addUser, users } from '../database/db';
 
@@ -62,6 +63,13 @@ const SignupPage = () => {
     <StyledThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
         <FullPageWrapper>
+          <LogoWrapper>
+            <InstagramIcon color="primary" sx={{ fontSize: 50, marginRight: 1 }} />
+            <Typography variant="h5" color="primary" fontWeight="bold">
+              Socia
+            </Typography>
+          </LogoWrapper>
+
           <FormWrapper>
             <Typography variant="h4" gutterBottom>
               회원가입
@@ -160,10 +168,19 @@ const SignupPage = () => {
 
 const FullPageWrapper = styled(Box)`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
   background-color: ${({ theme }) => theme.palette.background.default};
+`;
+
+const LogoWrapper = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
 `;
 
 const FormWrapper = styled(Box)`

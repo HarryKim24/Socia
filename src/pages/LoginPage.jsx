@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { TextField, Button, Typography, Box, Link, ThemeProvider, FormControlLabel, Checkbox } from '@mui/material';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import InstagramIcon from '@mui/icons-material/Instagram';
 import theme from '../styles/theme';
 import { users } from '../database/db';
 
@@ -9,7 +10,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // 비밀번호 보이기 상태 추가
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = () => {
@@ -42,6 +43,13 @@ const LoginPage = () => {
     <StyledThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
         <FullPageWrapper>
+          <LogoWrapper>
+            <InstagramIcon color="primary" sx={{ fontSize: 50, marginRight: 1 }} />
+            <Typography variant="h5" color="primary" fontWeight="bold">
+              Socia
+            </Typography>
+          </LogoWrapper>
+
           <FormWrapper>
             <Typography variant="h4" gutterBottom>
               로그인
@@ -65,7 +73,7 @@ const LoginPage = () => {
 
             <TextField
               label="비밀번호"
-              type={showPassword ? 'text' : 'password'} // 비밀번호 보이기 상태에 따라 타입 변경
+              type={showPassword ? 'text' : 'password'}
               variant="outlined"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -77,7 +85,7 @@ const LoginPage = () => {
               control={
                 <Checkbox
                   checked={showPassword}
-                  onChange={handleToggleShowPassword} // 체크박스 클릭 시 비밀번호 보이기 상태 토글
+                  onChange={handleToggleShowPassword}
                   color="primary"
                 />
               }
@@ -111,10 +119,19 @@ const LoginPage = () => {
 
 const FullPageWrapper = styled(Box)`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
   background-color: ${({ theme }) => theme.palette.background.default};
+`;
+
+const LogoWrapper = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
 `;
 
 const FormWrapper = styled(Box)`
