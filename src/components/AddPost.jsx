@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
-import { addPost } from "../database/db";
+import { addPost, posts } from "../database/db";
 
 const AddPostDialog = ({ open, onClose, currentUser, onPostAdded }) => {
   const [postTitle, setPostTitle] = useState("");
@@ -11,9 +11,15 @@ const AddPostDialog = ({ open, onClose, currentUser, onPostAdded }) => {
     if (!postTitle.trim() || !postContent.trim()) {
       alert("제목과 내용을 모두 입력해주세요.");
       return;
-    }
+    };
+
+    const generatePostId = () => {
+      return posts.length > 0 ? posts[posts.length - 1].id + 1 : 1;
+    };
 
     const newPost = {
+      id: generatePostId(),
+      authorId: currentUser.id,
       author: currentUser.name,
       title: postTitle,
       content: postContent,

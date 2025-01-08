@@ -3,12 +3,15 @@ import { useState, useEffect } from "react";
 import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { posts as dbPosts } from "../database/db";
 import AddPostDialog from "../components/AddPost";
-
+import { useNavigate } from "react-router-dom";
+import theme from "../styles/theme";
 
 const HomePage = ({ currentUser }) => {
   const [open, setOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const navigate = useNavigate();
+  const [currentPosts, setCurrentPosts] = useState('전체 게시글');
 
   useEffect(() => {
     setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -31,8 +34,28 @@ const HomePage = ({ currentUser }) => {
 
   const handleLoginDialogClose = () => setLoginDialogOpen(false);
 
+  const navigateToHome = () => {
+    if (!currentUser) {
+      setLoginDialogOpen(true);
+    } else {
+      navigate('/home');
+      setCurrentPosts('전체 게시글');
+      setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+    }
+  };
+
+  const handleMyPosts = () => {
+    if (!currentUser) {
+      setLoginDialogOpen(true);
+    } else {
+      setCurrentPosts('내 글 보기');
+      const myPosts = dbPosts.filter(post => post.authorId === currentUser.id);
+      setPosts(myPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+    }
+  }
+
   return (
-    <div>
+    <div style={{ backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ display: "flex" }}>
         <Box
           sx={{
@@ -50,9 +73,9 @@ const HomePage = ({ currentUser }) => {
           <Button
             fullWidth
             sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(handleOpen)}
+            onClick={navigateToHome}
           >
-            글쓰기
+            홈
           </Button>
           <Button
             fullWidth
@@ -64,7 +87,14 @@ const HomePage = ({ currentUser }) => {
           <Button
             fullWidth
             sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(() => console.log("내 글"))}
+            onClick={() => handleButtonClick(handleOpen)}
+          >
+            글쓰기
+          </Button>
+          <Button
+            fullWidth
+            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
+            onClick={handleMyPosts}
           >
             내 글
           </Button>
@@ -85,26 +115,28 @@ const HomePage = ({ currentUser }) => {
         </Box>
 
         <Box sx={{ flexGrow: 1, padding: 4, marginLeft: "300px", height: "100%", overflowY: "auto" }}>
-        {posts.map((post, index) => (
-          <Box
-            sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px" }}
-            key={index}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              {post.title?.length > 30 ? `${post.title.slice(0, 30)}...` : post.title || "제목 없음"}
-            </Typography>
-        
-            <Typography variant="body2" sx={{ margin: "8px 0" }}>
-              {post.content?.length > 100 ? `${post.content.slice(0, 100)}...` : post.content || "내용 없음"}
-            </Typography>
-        
-            <Typography variant="caption" color="textSecondary" sx={{ display: "flex", justifyContent: "space-between" }}>
-              <span>{post.author || "익명"}</span>
-              <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : "날짜 없음"}</span>
-            </Typography>
-          </Box>
-        ))}
-
+          <Typography variant="h5" sx={{ paddingBottom: 2, color: theme.palette.primary.main, fontWeight: 700 }}>
+            {currentPosts}
+          </Typography>
+          {posts.map((post, index) => (
+            <Box
+              sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px", backgroundColor: theme.palette.background.posts }}
+              key={index}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {post.title?.length > 30 ? `${post.title.slice(0, 30)}...` : post.title || "제목 없음"}
+              </Typography>
+          
+              <Typography variant="body2" sx={{ margin: "8px 0" }}>
+                {post.content?.length > 100 ? `${post.content.slice(0, 100)}...` : post.content || "내용 없음"}
+              </Typography>
+          
+              <Typography variant="caption" color="textSecondary" sx={{ display: "flex", justifyContent: "space-between" }}>
+                <span>{post.author || "익명"}</span>
+                <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : "날짜 없음"}</span>
+              </Typography>
+            </Box>
+          ))}
         </Box>
       </Box>
 
