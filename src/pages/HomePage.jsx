@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { posts as dbPosts } from "../database/db";
 import AddPostDialog from "../components/AddPost";
-
+import { useNavigate } from "react-router-dom";
 
 const HomePage = ({ currentUser }) => {
   const [open, setOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -31,6 +32,14 @@ const HomePage = ({ currentUser }) => {
 
   const handleLoginDialogClose = () => setLoginDialogOpen(false);
 
+  const navigateToHome = () => {
+    if (!currentUser) {
+      setLoginDialogOpen(true);
+    } else {
+      navigate('/home');
+    }
+  };
+
   return (
     <div>
       <Box sx={{ display: "flex" }}>
@@ -50,9 +59,9 @@ const HomePage = ({ currentUser }) => {
           <Button
             fullWidth
             sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(handleOpen)}
+            onClick={navigateToHome}
           >
-            글쓰기
+            홈
           </Button>
           <Button
             fullWidth
@@ -60,6 +69,13 @@ const HomePage = ({ currentUser }) => {
             onClick={() => handleButtonClick(() => console.log("인기글"))}
           >
             인기글
+          </Button>
+          <Button
+            fullWidth
+            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
+            onClick={() => handleButtonClick(handleOpen)}
+          >
+            글쓰기
           </Button>
           <Button
             fullWidth
