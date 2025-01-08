@@ -21,6 +21,11 @@ const SignupPage = () => {
       setError('모든 필드를 입력해주세요.');
       return;
     }
+
+    if (name.length > 8) {
+      setError('이름은 최대 8글자까지 입력 가능합니다.');
+      return;
+    }
   
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
@@ -39,6 +44,7 @@ const SignupPage = () => {
       setError('이미 등록된 이메일 주소입니다.');
       return;
     }
+
   
     addUser({ email, password, name });
     setError(null);
