@@ -13,6 +13,7 @@ export const addUser = (user) => {
 export const posts = [
   {
     author: 'name1',
+    title: 'title1',
     content: 'content1',
     createdAt: (function() {
       const date = new Date();

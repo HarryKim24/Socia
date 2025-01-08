@@ -85,15 +85,26 @@ const HomePage = ({ currentUser }) => {
         </Box>
 
         <Box sx={{ flexGrow: 1, padding: 4, marginLeft: "300px", height: "100%", overflowY: "auto" }}>
-          {posts.map((post, index) => (
-            <Box sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px" }} key={index}>
-              <Typography variant="h6">{post.author}</Typography>
-              <Typography variant="body1">{post.content}</Typography>
-              <Typography variant="caption" color="textSecondary">
-                {new Date(post.createdAt).toLocaleString()}
-              </Typography>
-            </Box>
-          ))}
+        {posts.map((post, index) => (
+          <Box
+            sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px" }}
+            key={index}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              {post.title?.length > 30 ? `${post.title.slice(0, 30)}...` : post.title || "제목 없음"}
+            </Typography>
+        
+            <Typography variant="body2" sx={{ margin: "8px 0" }}>
+              {post.content?.length > 100 ? `${post.content.slice(0, 100)}...` : post.content || "내용 없음"}
+            </Typography>
+        
+            <Typography variant="caption" color="textSecondary" sx={{ display: "flex", justifyContent: "space-between" }}>
+              <span>{post.author || "익명"}</span>
+              <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : "날짜 없음"}</span>
+            </Typography>
+          </Box>
+        ))}
+
         </Box>
       </Box>
 

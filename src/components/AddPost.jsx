@@ -4,30 +4,41 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } 
 import { addPost } from "../database/db";
 
 const AddPostDialog = ({ open, onClose, currentUser, onPostAdded }) => {
+  const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
 
   const handlePost = () => {
-    if (!postContent.trim()) {
-      alert("내용을 입력해주세요.");
+    if (!postTitle.trim() || !postContent.trim()) {
+      alert("제목과 내용을 모두 입력해주세요.");
       return;
     }
 
     const newPost = {
       author: currentUser.name,
+      title: postTitle,
       content: postContent,
       createdAt: new Date().toISOString(),
     };
 
     addPost(newPost);
     onPostAdded(newPost);
+    setPostTitle("");
     setPostContent("");
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>새 글 작성</DialogTitle>
+      <DialogTitle sx={{ fontWeight: 700 }}>새 글 작성</DialogTitle>
       <DialogContent>
+        <TextField
+          fullWidth
+          variant="outlined"
+          label="제목"
+          value={postTitle}
+          onChange={(e) => setPostTitle(e.target.value)}
+          sx={{ marginBottom: 2, marginTop: 1 }}
+        />
         <TextField
           fullWidth
           multiline
@@ -39,10 +50,10 @@ const AddPostDialog = ({ open, onClose, currentUser, onPostAdded }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={onClose} color="secondary" sx={{ fontWeight: 700 }}>
           취소
         </Button>
-        <Button onClick={handlePost} color="primary" variant="contained">
+        <Button onClick={handlePost} color="primary" variant="contained" sx={{ fontWeight: 700 }}>
           게시
         </Button>
       </DialogActions>
