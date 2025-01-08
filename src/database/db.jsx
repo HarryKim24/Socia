@@ -1,5 +1,6 @@
 export const users = [
   {
+    id: 1,
     email: "test1@mail.com",
     password: "test1234",
     name: "name1",
@@ -7,7 +8,9 @@ export const users = [
 ];
 
 export const addUser = (user) => {
-  users.push(user);
+  const newId = users.length > 0 ? users[users.length - 1].id + 1 : 1;
+  const userWithId = { ...user, id: newId };
+  users.push(userWithId);
 };
 
 export const posts = [

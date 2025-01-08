@@ -21,30 +21,30 @@ const SignupPage = () => {
       setError('모든 필드를 입력해주세요.');
       return;
     }
-
+  
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       setError('유효한 이메일 주소를 입력해주세요.');
       return;
     }
-
+  
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,64}$/;
     if (!passwordRegex.test(password)) {
       setError('비밀번호는 8~64자 사이의 영문과 숫자가 포함되어야 합니다.');
       return;
     }
-
+  
     const existingUser = users.find((user) => user.email === email);
     if (existingUser) {
       setError('이미 등록된 이메일 주소입니다.');
       return;
     }
-
+  
     addUser({ email, password, name });
     setError(null);
     setSuccess('회원가입이 완료되었습니다!');
     setOpenModal(true);
-
+  
     setEmail('');
     setPassword('');
     setName('');
