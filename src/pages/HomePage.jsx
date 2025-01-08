@@ -37,8 +37,18 @@ const HomePage = ({ currentUser }) => {
       setLoginDialogOpen(true);
     } else {
       navigate('/home');
+      setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
     }
   };
+
+  const handleMyPosts = () => {
+    if (!currentUser) {
+      setLoginDialogOpen(true);
+    } else {
+      const myPosts = dbPosts.filter(post => post.authorId === currentUser.id);
+      setPosts(myPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+    }
+  }
 
   return (
     <div>
@@ -80,7 +90,7 @@ const HomePage = ({ currentUser }) => {
           <Button
             fullWidth
             sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(() => console.log("내 글"))}
+            onClick={handleMyPosts}
           >
             내 글
           </Button>
