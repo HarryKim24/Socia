@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
-import { posts as dbPosts, addPost } from "../database/db";
+import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { posts as dbPosts } from "../database/db";
+import AddPostDialog from "../components/AddPost";
+
 
 const HomePage = ({ currentUser }) => {
   const [open, setOpen] = useState(false);
-  const [postContent, setPostContent] = useState("");
   const [posts, setPosts] = useState([]);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
 
@@ -14,27 +15,10 @@ const HomePage = ({ currentUser }) => {
   }, []);
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    setPostContent("");
-  };
+  const handleClose = () => setOpen(false);
 
-  const handlePost = () => {
-    if (!postContent.trim()) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
-
-    const newPost = {
-      author: currentUser.name,
-      content: postContent,
-      createdAt: new Date().toISOString(),
-    };
-
-    addPost(newPost);
+  const handlePostAdded = (newPost) => {
     setPosts((prevPosts) => [newPost, ...prevPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-    setPostContent("");
-    setOpen(false);
   };
 
   const handleButtonClick = (action) => {
@@ -113,40 +97,26 @@ const HomePage = ({ currentUser }) => {
         </Box>
       </Box>
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>새 글 작성</DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            variant="outlined"
-            label="내용"
-            value={postContent}
-            onChange={(e) => setPostContent(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="secondary">
-            취소
-          </Button>
-          <Button onClick={handlePost} color="primary" variant="contained">
-            게시
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AddPostDialog
+        open={open}
+        onClose={handleClose}
+        currentUser={currentUser}
+        onPostAdded={handlePostAdded}
+      />
 
-      <Dialog open={loginDialogOpen} onClose={handleLoginDialogClose}>
-        <DialogTitle>로그인 필요</DialogTitle>
-        <DialogContent>
-          <Typography>로그인 후 사용하실 수 있습니다.</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleLoginDialogClose} color="secondary">
-            닫기
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {loginDialogOpen && (
+        <Dialog open={loginDialogOpen} onClose={handleLoginDialogClose}>
+          <DialogTitle>로그인 필요</DialogTitle>
+          <DialogContent>
+            <Typography>로그인 후 사용하실 수 있습니다.</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleLoginDialogClose} color="secondary">
+              닫기
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </div>
   );
 };
