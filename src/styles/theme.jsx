@@ -13,7 +13,8 @@ const theme = createTheme({
     },
     background: {
       default: '#d1c4e9',
-      paper: '#ede7f6',
+      paper: '#f6f4f9',
+      posts: '#ede7f6',
     },
   },
   typography: {

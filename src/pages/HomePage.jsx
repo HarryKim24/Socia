@@ -4,6 +4,7 @@ import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActi
 import { posts as dbPosts } from "../database/db";
 import AddPostDialog from "../components/AddPost";
 import { useNavigate } from "react-router-dom";
+import theme from "../styles/theme";
 
 const HomePage = ({ currentUser }) => {
   const [open, setOpen] = useState(false);
@@ -51,7 +52,7 @@ const HomePage = ({ currentUser }) => {
   }
 
   return (
-    <div>
+    <div style={{ backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ display: "flex" }}>
         <Box
           sx={{
@@ -113,7 +114,7 @@ const HomePage = ({ currentUser }) => {
         <Box sx={{ flexGrow: 1, padding: 4, marginLeft: "300px", height: "100%", overflowY: "auto" }}>
         {posts.map((post, index) => (
           <Box
-            sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px" }}
+            sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px", backgroundColor: theme.palette.background.posts }}
             key={index}
           >
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
