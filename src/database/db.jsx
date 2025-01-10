@@ -31,4 +31,3 @@ export const posts = [
 export const addPost = (post) => {
   posts.push(post);
 };
-

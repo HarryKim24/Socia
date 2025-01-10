@@ -47,15 +47,15 @@ const TopBar = ({ currentUser }) => {
         </Toolbar>
       </AppBar>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>로그아웃</DialogTitle>
+        <DialogTitle color='primary' sx={{ fontWeight: 700 }}>로그아웃</DialogTitle>
         <DialogContent>
-          <DialogContentText>로그아웃 하시겠습니까?</DialogContentText>
+          <DialogContentText color='secondary' sx={{ fontWeight: 700 }}>로그아웃 하시겠습니까?</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary" sx={{ fontWeight: '700' }}>
             취소
           </Button>
-          <Button onClick={handleConfirmLogout} color="primary" autoFocus sx={{ fontWeight: '700' }}>
+          <Button onClick={handleConfirmLogout} color="error" autoFocus sx={{ fontWeight: '700' }}>
             로그아웃
           </Button>
         </DialogActions>
