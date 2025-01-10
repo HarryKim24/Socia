@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Typography, Box, ThemeProvider, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Checkbox, Link } from '@mui/material';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import InstagramIcon from '@mui/icons-material/Instagram'; // Instagram 아이콘 import
+import InstagramIcon from '@mui/icons-material/Instagram';
 import theme from '../styles/theme';
 import { addUser, users } from '../database/db';
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -38,6 +39,11 @@ const SignupPage = () => {
       setError('비밀번호는 8~64자 사이의 영문과 숫자가 포함되어야 합니다.');
       return;
     }
+
+    if (password !== confirmPassword) {
+      setError('비밀번호가 일치하지 않습니다.');
+      return;
+    }
   
     const existingUser = users.find((user) => user.email === email);
     if (existingUser) {
@@ -54,6 +60,7 @@ const SignupPage = () => {
     setEmail('');
     setPassword('');
     setName('');
+    setConfirmPassword('');
   };
 
   const handleCloseModal = () => {
@@ -118,6 +125,16 @@ const SignupPage = () => {
               variant="outlined"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+
+            <TextField
+              label="비밀번호 확인"
+              type={showPassword ? 'text' : 'password'}
+              variant="outlined"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               fullWidth
               margin="normal"
             />
