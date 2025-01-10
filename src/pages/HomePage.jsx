@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { posts as dbPosts } from "../database/db";
 import AddPostDialog from "../components/AddPost";
+import UserInfo from "../components/UserInfo";
 import { useNavigate } from "react-router-dom";
 import theme from "../styles/theme";
 
@@ -10,8 +11,9 @@ const HomePage = ({ currentUser }) => {
   const [open, setOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const navigate = useNavigate();
-  const [currentPosts, setCurrentPosts] = useState('전체 게시글');
+  const [currentPosts, setCurrentPosts] = useState("전체 게시글");
 
   useEffect(() => {
     setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -38,8 +40,8 @@ const HomePage = ({ currentUser }) => {
     if (!currentUser) {
       setLoginDialogOpen(true);
     } else {
-      navigate('/home');
-      setCurrentPosts('전체 게시글');
+      navigate("/home");
+      setCurrentPosts("전체 게시글");
       setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
     }
   };
@@ -48,11 +50,14 @@ const HomePage = ({ currentUser }) => {
     if (!currentUser) {
       setLoginDialogOpen(true);
     } else {
-      setCurrentPosts('내 글 보기');
-      const myPosts = dbPosts.filter(post => post.authorId === currentUser.id);
+      setCurrentPosts("내 글 보기");
+      const myPosts = dbPosts.filter((post) => post.authorId === currentUser.id);
       setPosts(myPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
     }
-  }
+  };
+
+  const handleInfoDialogOpen = () => setInfoDialogOpen(true); 
+  const handleInfoDialogClose = () => setInfoDialogOpen(false); 
 
   return (
     <div style={{ backgroundColor: theme.palette.background.paper }}>
@@ -108,7 +113,7 @@ const HomePage = ({ currentUser }) => {
           <Button
             fullWidth
             sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(() => console.log("내 정보"))}
+            onClick={handleInfoDialogOpen}
           >
             내 정보
           </Button>
@@ -160,6 +165,12 @@ const HomePage = ({ currentUser }) => {
           </DialogActions>
         </Dialog>
       )}
+
+      <UserInfo 
+        currentUser={currentUser}
+        open={infoDialogOpen}
+        onClose={handleInfoDialogClose}
+      />
     </div>
   );
 };
