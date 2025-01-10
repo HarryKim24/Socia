@@ -55,7 +55,7 @@ const TopBar = ({ currentUser }) => {
           <Button onClick={handleClose} color="primary" sx={{ fontWeight: '700' }}>
             취소
           </Button>
-          <Button onClick={handleConfirmLogout} color="primary" autoFocus sx={{ fontWeight: '700' }}>
+          <Button onClick={handleConfirmLogout} color="error" autoFocus sx={{ fontWeight: '700' }}>
             로그아웃
           </Button>
         </DialogActions>

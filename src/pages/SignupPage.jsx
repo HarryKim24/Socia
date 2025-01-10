@@ -78,8 +78,8 @@ const SignupPage = () => {
         <FullPageWrapper>
           <LogoWrapper>
             <InstagramIcon color="primary" sx={{ fontSize: 50, marginRight: 1 }} />
-            <Typography variant="h5" color="primary" fontWeight="bold">
-              Socia
+            <Typography variant="h4" color="primary" fontWeight="bold">
+              SOCIA
             </Typography>
           </LogoWrapper>
 
