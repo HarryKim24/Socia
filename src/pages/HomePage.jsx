@@ -12,8 +12,9 @@ const HomePage = ({ currentUser }) => {
   const [posts, setPosts] = useState([]);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
-  const navigate = useNavigate();
   const [currentPosts, setCurrentPosts] = useState("전체 게시글");
+  const [selectedPost, setSelectedPost] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -59,6 +60,14 @@ const HomePage = ({ currentUser }) => {
   const handleInfoDialogOpen = () => setInfoDialogOpen(true); 
   const handleInfoDialogClose = () => setInfoDialogOpen(false); 
 
+  const handlePostClick = (post) => {
+    setSelectedPost(post);
+  };
+
+  const handlePostModalClose = () => {
+    setSelectedPost(null);
+  };
+
   return (
     <div style={{ backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ display: "flex" }}>
@@ -92,13 +101,6 @@ const HomePage = ({ currentUser }) => {
           <Button
             fullWidth
             sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(handleOpen)}
-          >
-            글쓰기
-          </Button>
-          <Button
-            fullWidth
-            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
             onClick={handleMyPosts}
           >
             내 글
@@ -106,9 +108,9 @@ const HomePage = ({ currentUser }) => {
           <Button
             fullWidth
             sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(() => console.log("내 댓글"))}
+            onClick={() => handleButtonClick(handleOpen)}
           >
-            내 댓글
+            글쓰기
           </Button>
           <Button
             fullWidth
@@ -125,17 +127,16 @@ const HomePage = ({ currentUser }) => {
           </Typography>
           {posts.map((post, index) => (
             <Box
-              sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px", backgroundColor: theme.palette.background.posts }}
+              sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px", backgroundColor: theme.palette.background.posts, cursor: "pointer" }}
               key={index}
+              onClick={() => handlePostClick(post)}
             >
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 {post.title?.length > 30 ? `${post.title.slice(0, 30)}...` : post.title || "제목 없음"}
               </Typography>
-          
               <Typography variant="body2" sx={{ margin: "8px 0" }}>
                 {post.content?.length > 100 ? `${post.content.slice(0, 100)}...` : post.content || "내용 없음"}
               </Typography>
-          
               <Typography variant="caption" color="textSecondary" sx={{ display: "flex", justifyContent: "space-between" }}>
                 <span>{post.author || "익명"}</span>
                 <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : "날짜 없음"}</span>
@@ -165,6 +166,83 @@ const HomePage = ({ currentUser }) => {
           </DialogActions>
         </Dialog>
       )}
+
+{selectedPost && (
+  <Dialog
+    open={!!selectedPost}
+    onClose={handlePostModalClose}
+    PaperProps={{
+      style: {
+        width: '600px',
+        height: '600px',
+        maxWidth: 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: theme.palette.background.posts,
+        color: theme.palette.text.primary,
+      },
+    }}
+  >
+    <Box
+      sx={{
+        flex: '0 0 auto',
+        padding: 2,
+        borderBottom: '1px solid #ddd',
+        fontWeight: theme.typography.fontWeightBold,
+        color: theme.palette.primary.main,
+        backgroundColor: theme.palette.background.posts,
+      }}
+    >
+      <Typography variant="h6" sx={{ fontFamily: theme.typography.fontFamily }}>
+        {selectedPost.title || "제목 없음"}
+      </Typography>
+    </Box>
+    <Box
+      sx={{
+        flex: '1 1 auto',
+        padding: 3,
+        overflowY: 'auto',
+        backgroundColor: theme.palette.background.paper,
+      }}
+    >
+      <Typography variant="body1" sx={{ marginBottom: 2, fontFamily: theme.typography.fontFamily }}>
+        {selectedPost.content || "내용 없음"}
+      </Typography>
+    </Box>
+    <Box
+      sx={{
+        flex: '0 0 auto',
+        padding: 1,
+        borderTop: '1px solid #ddd',
+        fontSize: '0.875rem',
+        color: theme.palette.secondary.main,
+      }}
+    >
+      <Typography variant="caption">
+        작성자: {selectedPost.author || "익명"}
+        <br />
+        작성일: {selectedPost.createdAt ? new Date(selectedPost.createdAt).toLocaleString() : "날짜 없음"}
+      </Typography>
+    </Box>
+    <DialogActions
+      sx={{
+        flex: '0 0 auto',
+        padding: 1,
+        borderTop: '1px solid #ddd',
+      }}
+    >
+      <Button
+        onClick={handlePostModalClose}
+        color="primary"
+        sx={{ fontWeight: theme.typography.fontWeightBold }}
+      >
+        닫기
+      </Button>
+    </DialogActions>
+  </Dialog>
+)}
+
+
 
       <UserInfo 
         currentUser={currentUser}
