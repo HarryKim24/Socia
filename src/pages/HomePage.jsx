@@ -6,14 +6,17 @@ import AddPostDialog from "../components/AddPost";
 import UserInfo from "../components/UserInfo";
 import { useNavigate } from "react-router-dom";
 import theme from "../styles/theme";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const HomePage = ({ currentUser }) => {
   const [open, setOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
-  const navigate = useNavigate();
   const [currentPosts, setCurrentPosts] = useState("전체 게시글");
+  const [selectedPost, setSelectedPost] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPosts([...dbPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -59,6 +62,24 @@ const HomePage = ({ currentUser }) => {
   const handleInfoDialogOpen = () => setInfoDialogOpen(true); 
   const handleInfoDialogClose = () => setInfoDialogOpen(false); 
 
+  const handlePostClick = (post) => setSelectedPost(post);
+
+  const handlePostModalClose = () => setSelectedPost(null);
+
+  const toggleLike = (postId) => {
+    const updatedPost = { ...selectedPost };
+    updatedPost.likes = updatedPost.liked ? updatedPost.likes - 1 : updatedPost.likes + 1;
+    updatedPost.liked = !updatedPost.liked;
+    setSelectedPost(updatedPost);
+
+    setPosts((prevPosts) => 
+      prevPosts.map((post) =>
+        post.id === postId ? updatedPost : post
+      )
+    );
+    console.log(posts);
+  };
+
   return (
     <div style={{ backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ display: "flex" }}>
@@ -75,46 +96,19 @@ const HomePage = ({ currentUser }) => {
             backgroundColor: "background.default",
           }}
         >
-          <Button
-            fullWidth
-            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={navigateToHome}
-          >
+          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={navigateToHome}>
             홈
           </Button>
-          <Button
-            fullWidth
-            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(() => console.log("인기글"))}
-          >
+          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={() => handleButtonClick(() => console.log("인기글"))}>
             인기글
           </Button>
-          <Button
-            fullWidth
-            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(handleOpen)}
-          >
-            글쓰기
-          </Button>
-          <Button
-            fullWidth
-            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={handleMyPosts}
-          >
+          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={handleMyPosts}>
             내 글
           </Button>
-          <Button
-            fullWidth
-            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={() => handleButtonClick(() => console.log("내 댓글"))}
-          >
-            내 댓글
+          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={() => handleButtonClick(handleOpen)}>
+            글쓰기
           </Button>
-          <Button
-            fullWidth
-            sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }}
-            onClick={handleInfoDialogOpen}
-          >
+          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={handleInfoDialogOpen}>
             내 정보
           </Button>
         </Box>
@@ -125,32 +119,32 @@ const HomePage = ({ currentUser }) => {
           </Typography>
           {posts.map((post, index) => (
             <Box
-              sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px", backgroundColor: theme.palette.background.posts }}
+              sx={{ marginBottom: 2, padding: 2, border: "1px solid #ddd", minWidth: "600px", backgroundColor: theme.palette.background.posts, cursor: "pointer" }}
               key={index}
+              onClick={() => handlePostClick(post)}
             >
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 {post.title?.length > 30 ? `${post.title.slice(0, 30)}...` : post.title || "제목 없음"}
               </Typography>
-          
               <Typography variant="body2" sx={{ margin: "8px 0" }}>
                 {post.content?.length > 100 ? `${post.content.slice(0, 100)}...` : post.content || "내용 없음"}
               </Typography>
-          
               <Typography variant="caption" color="textSecondary" sx={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{post.author || "익명"}</span>
-                <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : "날짜 없음"}</span>
+                <Typography sx={{ display: 'flex', flexDirection: 'column', fontSize: '12px', paddingTop: 1 }}>
+                  <span>{post.author || "익명"}</span>
+                  <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : "날짜 없음"}</span>
+                </Typography>
+                <Typography sx={{ display: "flex", alignItems: "center", paddingTop: 2, fontSize: "14px", gap: 0.5 }}>
+                  {post.liked ? <FavoriteIcon sx={{ fontSize: "20px", color: theme.palette.primary.main }} /> : <FavoriteBorderIcon sx={{ fontSize: "20px", color: theme.palette.primary.main }} />}
+                  {post.likes || 0}
+                </Typography>
               </Typography>
             </Box>
           ))}
         </Box>
       </Box>
 
-      <AddPostDialog
-        open={open}
-        onClose={handleClose}
-        currentUser={currentUser}
-        onPostAdded={handlePostAdded}
-      />
+      <AddPostDialog open={open} onClose={handleClose} currentUser={currentUser} onPostAdded={handlePostAdded} />
 
       {loginDialogOpen && (
         <Dialog open={loginDialogOpen} onClose={handleLoginDialogClose}>
@@ -166,11 +160,33 @@ const HomePage = ({ currentUser }) => {
         </Dialog>
       )}
 
-      <UserInfo 
-        currentUser={currentUser}
-        open={infoDialogOpen}
-        onClose={handleInfoDialogClose}
-      />
+      {selectedPost && (
+        <Dialog
+          open={!!selectedPost}
+          onClose={handlePostModalClose}
+          PaperProps={{ style: { width: '600px', height: '600px', maxWidth: 'none', backgroundColor: theme.palette.background.posts } }}
+        >
+          <Box sx={{ padding: 2, borderBottom: '1px solid #ddd' }}>
+            <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
+              {selectedPost.title || "제목 없음"}
+            </Typography>
+          </Box>
+          <Box sx={{ padding: 3, overflowY: 'auto', backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="body1" sx={{ minHeight: '398px' }}>{selectedPost.content || "내용 없음"}</Typography>
+          </Box>
+          <Box sx={{ padding: 1, borderTop: '1px solid #ddd', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Typography variant="caption">{selectedPost.author || "익명"} | {new Date(selectedPost.createdAt).toLocaleString()}</Typography>
+              <Button onClick={() => toggleLike(selectedPost.id)}>
+                {selectedPost.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />} {selectedPost.likes || 0}
+              </Button>
+            </Box>
+            <Button onClick={handlePostModalClose}>닫기</Button>
+          </Box>
+        </Dialog>
+      )}
+
+      <UserInfo currentUser={currentUser} open={infoDialogOpen} onClose={handleInfoDialogClose} />
     </div>
   );
 };
