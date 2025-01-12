@@ -59,6 +59,12 @@ const HomePage = ({ currentUser }) => {
     }
   };
 
+  const handlePopularPosts = () => {
+    const popularPosts = dbPosts.filter((post) => post.likes >= 10);
+    setCurrentPosts("인기글");
+    setPosts(popularPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+  }
+
   const handleInfoDialogOpen = () => setInfoDialogOpen(true); 
   const handleInfoDialogClose = () => setInfoDialogOpen(false); 
 
@@ -80,6 +86,8 @@ const HomePage = ({ currentUser }) => {
     console.log(posts);
   };
 
+
+
   return (
     <div style={{ backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ display: "flex" }}>
@@ -99,7 +107,7 @@ const HomePage = ({ currentUser }) => {
           <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={navigateToHome}>
             홈
           </Button>
-          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={() => handleButtonClick(() => console.log("인기글"))}>
+          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={() => handleButtonClick(handlePopularPosts)}>
             인기글
           </Button>
           <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={handleMyPosts}>
