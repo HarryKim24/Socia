@@ -78,13 +78,17 @@ const HomePage = ({ currentUser }) => {
     updatedPost.likes = updatedPost.liked ? updatedPost.likes - 1 : updatedPost.likes + 1;
     updatedPost.liked = !updatedPost.liked;
     setSelectedPost(updatedPost);
-
-    setPosts((prevPosts) => 
-      prevPosts.map((post) =>
-        post.id === postId ? updatedPost : post
-      )
+  
+    const updatedDbPosts = dbPosts.map((post) =>
+      post.id === postId ? updatedPost : post
     );
-    console.log(posts);
+    
+    dbPosts.length = 0;
+    dbPosts.push(...updatedDbPosts);
+    
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => (post.id === postId ? updatedPost : post))
+    );
   };
 
   const handleDeleteConfirmationOpen = () => setDeleteConfirmationDialogOpen(true);
