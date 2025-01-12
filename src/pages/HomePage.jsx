@@ -16,6 +16,7 @@ const HomePage = ({ currentUser }) => {
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const [currentPosts, setCurrentPosts] = useState("전체 게시글");
   const [selectedPost, setSelectedPost] = useState(null);
+  const [deleteConfirmationDialogOpen, setDeleteConfirmationDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -86,7 +87,18 @@ const HomePage = ({ currentUser }) => {
     console.log(posts);
   };
 
+  const handleDeleteConfirmationOpen = () => setDeleteConfirmationDialogOpen(true);
+  const handleDeleteConfirmationClose = () => setDeleteConfirmationDialogOpen(false);
 
+  const handleDeletePost = (postId) => {
+    const postIndex = dbPosts.findIndex(post => post.id === postId);
+    if (postIndex !== -1) {
+      dbPosts.splice(postIndex, 1);
+    }
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+    setDeleteConfirmationDialogOpen(false); 
+    setSelectedPost(null);
+  };
 
   return (
     <div style={{ backgroundColor: theme.palette.background.paper }}>
@@ -201,16 +213,32 @@ const HomePage = ({ currentUser }) => {
         </Button>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-      {selectedPost.authorId === currentUser?.id && (
-        <Button color="error">
-          삭제
-        </Button>
-      )}
-      <Button onClick={handlePostModalClose}>닫기</Button>
+        <Button onClick={handlePostModalClose}>닫기</Button>
+        {selectedPost.authorId === currentUser?.id && (
+          <Button color="error" onClick={handleDeleteConfirmationOpen}>
+            삭제
+          </Button>
+        )}
       </Box>
     </Box>
   </Dialog>
 )}
+
+<Dialog open={deleteConfirmationDialogOpen} onClose={handleDeleteConfirmationClose}>
+        <DialogTitle>게시글 삭제</DialogTitle>
+        <DialogContent>
+          <Typography>정말로 이 게시글을 삭제하시겠습니까?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteConfirmationClose} color="secondary">취소</Button>
+          <Button 
+            onClick={() => handleDeletePost(selectedPost.id)} 
+            color="error"
+          >
+            삭제
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <UserInfo currentUser={currentUser} open={infoDialogOpen} onClose={handleInfoDialogClose} />
     </div>
