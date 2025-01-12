@@ -168,31 +168,49 @@ const HomePage = ({ currentUser }) => {
         </Dialog>
       )}
 
-      {selectedPost && (
-        <Dialog
-          open={!!selectedPost}
-          onClose={handlePostModalClose}
-          PaperProps={{ style: { width: '600px', height: '600px', maxWidth: 'none', backgroundColor: theme.palette.background.posts } }}
-        >
-          <Box sx={{ padding: 2, borderBottom: '1px solid #ddd' }}>
-            <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
-              {selectedPost.title || "제목 없음"}
-            </Typography>
-          </Box>
-          <Box sx={{ padding: 3, overflowY: 'auto', backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="body1" sx={{ minHeight: '398px' }}>{selectedPost.content || "내용 없음"}</Typography>
-          </Box>
-          <Box sx={{ padding: 1, borderTop: '1px solid #ddd', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Typography variant="caption">{selectedPost.author || "익명"} | {new Date(selectedPost.createdAt).toLocaleString()}</Typography>
-              <Button onClick={() => toggleLike(selectedPost.id)}>
-                {selectedPost.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />} {selectedPost.likes || 0}
-              </Button>
-            </Box>
-            <Button onClick={handlePostModalClose}>닫기</Button>
-          </Box>
-        </Dialog>
+{selectedPost && (
+  <Dialog
+    open={!!selectedPost}
+    onClose={handlePostModalClose}
+    PaperProps={{
+      style: {
+        width: '600px',
+        height: '600px',
+        maxWidth: 'none',
+        backgroundColor: theme.palette.background.posts
+      },
+    }}
+  >
+    <Box sx={{ padding: 2, borderBottom: '1px solid #ddd' }}>
+      <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
+        {selectedPost.title || "제목 없음"}
+      </Typography>
+    </Box>
+    <Box sx={{ padding: 3, overflowY: 'auto', backgroundColor: theme.palette.background.paper }}>
+      <Typography variant="body1" sx={{ minHeight: '398px' }}>
+        {selectedPost.content || "내용 없음"}
+      </Typography>
+    </Box>
+    <Box sx={{ padding: 1, borderTop: '1px solid #ddd', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Typography variant="caption">
+          {selectedPost.author || "익명"} | {new Date(selectedPost.createdAt).toLocaleString()}
+        </Typography>
+        <Button onClick={() => toggleLike(selectedPost.id)}>
+          {selectedPost.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />} {selectedPost.likes || 0}
+        </Button>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      {selectedPost.authorId === currentUser?.id && (
+        <Button color="error">
+          삭제
+        </Button>
       )}
+      <Button onClick={handlePostModalClose}>닫기</Button>
+      </Box>
+    </Box>
+  </Dialog>
+)}
 
       <UserInfo currentUser={currentUser} open={infoDialogOpen} onClose={handleInfoDialogClose} />
     </div>
