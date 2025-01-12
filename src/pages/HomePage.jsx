@@ -16,6 +16,7 @@ const HomePage = ({ currentUser }) => {
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const [currentPosts, setCurrentPosts] = useState("전체 게시글");
   const [selectedPost, setSelectedPost] = useState(null);
+  const [deleteConfirmationDialogOpen, setDeleteConfirmationDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,6 +60,12 @@ const HomePage = ({ currentUser }) => {
     }
   };
 
+  const handlePopularPosts = () => {
+    const popularPosts = dbPosts.filter((post) => post.likes >= 10);
+    setCurrentPosts("인기글");
+    setPosts(popularPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+  }
+
   const handleInfoDialogOpen = () => setInfoDialogOpen(true); 
   const handleInfoDialogClose = () => setInfoDialogOpen(false); 
 
@@ -80,6 +87,19 @@ const HomePage = ({ currentUser }) => {
     console.log(posts);
   };
 
+  const handleDeleteConfirmationOpen = () => setDeleteConfirmationDialogOpen(true);
+  const handleDeleteConfirmationClose = () => setDeleteConfirmationDialogOpen(false);
+
+  const handleDeletePost = (postId) => {
+    const postIndex = dbPosts.findIndex(post => post.id === postId);
+    if (postIndex !== -1) {
+      dbPosts.splice(postIndex, 1);
+    }
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+    setDeleteConfirmationDialogOpen(false); 
+    setSelectedPost(null);
+  };
+
   return (
     <div style={{ backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ display: "flex" }}>
@@ -99,7 +119,7 @@ const HomePage = ({ currentUser }) => {
           <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={navigateToHome}>
             홈
           </Button>
-          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={() => handleButtonClick(() => console.log("인기글"))}>
+          <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={() => handleButtonClick(handlePopularPosts)}>
             인기글
           </Button>
           <Button fullWidth sx={{ marginBottom: 2, fontWeight: 700, fontSize: 16 }} onClick={handleMyPosts}>
@@ -160,31 +180,65 @@ const HomePage = ({ currentUser }) => {
         </Dialog>
       )}
 
-      {selectedPost && (
-        <Dialog
-          open={!!selectedPost}
-          onClose={handlePostModalClose}
-          PaperProps={{ style: { width: '600px', height: '600px', maxWidth: 'none', backgroundColor: theme.palette.background.posts } }}
-        >
-          <Box sx={{ padding: 2, borderBottom: '1px solid #ddd' }}>
-            <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
-              {selectedPost.title || "제목 없음"}
-            </Typography>
-          </Box>
-          <Box sx={{ padding: 3, overflowY: 'auto', backgroundColor: theme.palette.background.paper }}>
-            <Typography variant="body1" sx={{ minHeight: '398px' }}>{selectedPost.content || "내용 없음"}</Typography>
-          </Box>
-          <Box sx={{ padding: 1, borderTop: '1px solid #ddd', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Typography variant="caption">{selectedPost.author || "익명"} | {new Date(selectedPost.createdAt).toLocaleString()}</Typography>
-              <Button onClick={() => toggleLike(selectedPost.id)}>
-                {selectedPost.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />} {selectedPost.likes || 0}
-              </Button>
-            </Box>
-            <Button onClick={handlePostModalClose}>닫기</Button>
-          </Box>
-        </Dialog>
-      )}
+{selectedPost && (
+  <Dialog
+    open={!!selectedPost}
+    onClose={handlePostModalClose}
+    PaperProps={{
+      style: {
+        width: '600px',
+        height: '600px',
+        maxWidth: 'none',
+        backgroundColor: theme.palette.background.posts
+      },
+    }}
+  >
+    <Box sx={{ padding: 2, borderBottom: '1px solid #ddd' }}>
+      <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
+        {selectedPost.title || "제목 없음"}
+      </Typography>
+    </Box>
+    <Box sx={{ padding: 3, overflowY: 'auto', backgroundColor: theme.palette.background.paper }}>
+      <Typography variant="body1" sx={{ minHeight: '398px' }}>
+        {selectedPost.content || "내용 없음"}
+      </Typography>
+    </Box>
+    <Box sx={{ padding: 1, borderTop: '1px solid #ddd', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Typography variant="caption">
+          {selectedPost.author || "익명"} | {new Date(selectedPost.createdAt).toLocaleString()}
+        </Typography>
+        <Button onClick={() => toggleLike(selectedPost.id)}>
+          {selectedPost.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />} {selectedPost.likes || 0}
+        </Button>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button onClick={handlePostModalClose}>닫기</Button>
+        {selectedPost.authorId === currentUser?.id && (
+          <Button color="error" onClick={handleDeleteConfirmationOpen}>
+            삭제
+          </Button>
+        )}
+      </Box>
+    </Box>
+  </Dialog>
+)}
+
+<Dialog open={deleteConfirmationDialogOpen} onClose={handleDeleteConfirmationClose}>
+        <DialogTitle>게시글 삭제</DialogTitle>
+        <DialogContent>
+          <Typography>정말로 이 게시글을 삭제하시겠습니까?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteConfirmationClose} color="secondary">취소</Button>
+          <Button 
+            onClick={() => handleDeletePost(selectedPost.id)} 
+            color="error"
+          >
+            삭제
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <UserInfo currentUser={currentUser} open={infoDialogOpen} onClose={handleInfoDialogClose} />
     </div>
