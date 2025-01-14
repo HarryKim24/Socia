@@ -24,6 +24,7 @@ const AddPostDialog = ({ open, onClose, currentUser, onPostAdded }) => {
       title: postTitle,
       content: postContent,
       createdAt: new Date().toISOString(),
+      likes: 0,
     };
 
     addPost(newPost);
