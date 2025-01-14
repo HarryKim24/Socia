@@ -1,13 +1,37 @@
+/* eslint-disable react/prop-types */
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "../pages/Home";
-import Login from "../pages/Login";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import SignupPage from "../pages/SignupPage";
+import TopBar from "../components/Topbar";
 
-const AppRouter = () => {
+const AppRouter = ({ currentUser, setCurrentUser }) => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <LoginPage setCurrentUser={setCurrentUser} />
+          }
+        />
+        <Route
+          path="/login"
+          element={<LoginPage setCurrentUser={setCurrentUser} />}
+        />
+        <Route
+          path="/signup"
+          element={<SignupPage />}
+        />
+        <Route
+          path="/home"
+          element={
+            <>
+              <TopBar currentUser={currentUser} />
+              <HomePage currentUser={currentUser} />
+            </>
+          }
+        />
       </Routes>
     </Router>
   );
