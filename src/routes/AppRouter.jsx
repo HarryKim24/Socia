@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
-import TopBar from "../components/Topbar";
+import TopBar from "../components/TopBar";
 
 const AppRouter = ({ currentUser, setCurrentUser }) => {
   return (
