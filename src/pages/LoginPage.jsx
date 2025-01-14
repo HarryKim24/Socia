@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import theme from '../styles/theme';
 import { users } from '../database/db';
+import CryptoJS from 'crypto-js'; 
 
 const LoginPage = ({ setCurrentUser }) => {
   const [email, setEmail] = useState('');
@@ -26,7 +27,9 @@ const LoginPage = ({ setCurrentUser }) => {
       return;
     }
 
-    const user = users.find((u) => u.email === email && u.password === password);
+    const hashedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Base64);
+
+    const user = users.find((u) => u.email === email && u.password === hashedPassword);
 
     if (!user) {
       setError('아이디 또는 비밀번호를 잘못 입력했습니다.');
