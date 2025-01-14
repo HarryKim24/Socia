@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
 import { TextField, Button, Typography, Box, ThemeProvider, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Checkbox, Link } from '@mui/material';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -17,7 +18,16 @@ const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = () => {
+  const hashPassword = (password) => {
+    try {
+      const hashedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Base64);
+      return hashedPassword;
+    } catch (err) {
+      setError('비밀번호 암호화에 실패했습니다.', err);
+    }
+  };
+
+  const handleSignup = async () => {
     if (email === '' || password === '' || name === '') {
       setError('모든 필드를 입력해주세요.');
       return;
@@ -27,13 +37,13 @@ const SignupPage = () => {
       setError('이름은 최대 8글자까지 입력 가능합니다.');
       return;
     }
-  
+
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       setError('유효한 이메일 주소를 입력해주세요.');
       return;
     }
-  
+
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,64}$/;
     if (!passwordRegex.test(password)) {
       setError('비밀번호는 8~64자 사이의 영문과 숫자가 포함되어야 합니다.');
@@ -44,19 +54,20 @@ const SignupPage = () => {
       setError('비밀번호가 일치하지 않습니다.');
       return;
     }
-  
+
     const existingUser = users.find((user) => user.email === email);
     if (existingUser) {
       setError('이미 등록된 이메일 주소입니다.');
       return;
     }
 
-  
-    addUser({ email, password, name });
+    const hashedPassword = hashPassword(password);
+
+    addUser({ email, password: hashedPassword, name });
     setError(null);
     setSuccess('회원가입이 완료되었습니다!');
     setOpenModal(true);
-  
+
     setEmail('');
     setPassword('');
     setName('');
