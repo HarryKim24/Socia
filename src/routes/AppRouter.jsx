@@ -4,6 +4,7 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import TopBar from "../components/TopBar";
+import { Navigate } from "react-router-dom";
 
 const AppRouter = ({ currentUser, setCurrentUser }) => {
   return (
@@ -12,7 +13,7 @@ const AppRouter = ({ currentUser, setCurrentUser }) => {
         <Route
           path="/"
           element={
-            <LoginPage setCurrentUser={setCurrentUser} />
+            <Navigate to="/login" replace />
           }
         />
         <Route
@@ -26,10 +27,14 @@ const AppRouter = ({ currentUser, setCurrentUser }) => {
         <Route
           path="/home"
           element={
-            <>
-              <TopBar currentUser={currentUser} />
-              <HomePage currentUser={currentUser} />
-            </>
+            currentUser ? (
+              <>
+                <TopBar currentUser={currentUser} />
+                <HomePage currentUser={currentUser} />
+              </>
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         />
       </Routes>
